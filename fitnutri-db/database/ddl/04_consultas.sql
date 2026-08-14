@@ -1,5 +1,5 @@
 -- 20 CONSULTA_FISICA
-CREATE TABLE consulta_fisica (
+CREATE TABLE CONSULTA_FISICA (
     id_consulta_fisica  INTEGER      GENERATED ALWAYS AS IDENTITY,
     id_paciente         INTEGER      NOT NULL,
     id_profissional     INTEGER      NOT NULL,
@@ -17,12 +17,12 @@ CREATE TABLE consulta_fisica (
 
     CONSTRAINT fk_consulta_fisica_paciente
         FOREIGN KEY (id_paciente)
-        REFERENCES paciente (id_paciente)
+        REFERENCES PACIENTE (id_paciente)
         ON DELETE RESTRICT ON UPDATE CASCADE,
 
     CONSTRAINT fk_consulta_fisica_educador
         FOREIGN KEY (id_profissional)
-        REFERENCES educador_fisico (id_profissional)
+        REFERENCES EDUCADOR_FISICO (id_profissional)
         ON DELETE RESTRICT ON UPDATE CASCADE,
 
     CONSTRAINT ck_consulta_fisica_freq_cardiaca
@@ -33,7 +33,7 @@ CREATE TABLE consulta_fisica (
 );
 
 -- 21 CONSULTA_NUTRICIONAL
-CREATE TABLE consulta_nutricional (
+CREATE TABLE CONSULTA_NUTRICIONAL (
     id_consulta_nutricional  INTEGER      GENERATED ALWAYS AS IDENTITY,
     id_paciente              INTEGER      NOT NULL,
     id_profissional          INTEGER      NOT NULL,
@@ -49,12 +49,12 @@ CREATE TABLE consulta_nutricional (
 
     CONSTRAINT fk_consulta_nutricional_paciente
         FOREIGN KEY (id_paciente)
-        REFERENCES paciente (id_paciente)
+        REFERENCES PACIENTE (id_paciente)
         ON DELETE RESTRICT ON UPDATE CASCADE,
 
     CONSTRAINT fk_consulta_nutricional_nutricionista
         FOREIGN KEY (id_profissional)
-        REFERENCES nutricionista (id_profissional)
+        REFERENCES NUTRICIONISTA (id_profissional)
         ON DELETE RESTRICT ON UPDATE CASCADE,
 
     CONSTRAINT ck_consulta_nutricional_consumo_agua
@@ -65,7 +65,7 @@ CREATE TABLE consulta_nutricional (
 );
 
 -- 22 OBJETIVO_FISICO_PACIENTE
-CREATE TABLE objetivo_fisico_paciente (
+CREATE TABLE OBJETIVO_FISICO_PACIENTE (
     id_obj_paciente     INTEGER      GENERATED ALWAYS AS IDENTITY,
     id_consulta_fisica  INTEGER      NOT NULL,
     objetivo            VARCHAR(255) NOT NULL,
@@ -75,11 +75,11 @@ CREATE TABLE objetivo_fisico_paciente (
 
     CONSTRAINT fk_objetivo_fisico_paciente_consulta
         FOREIGN KEY (id_consulta_fisica)
-        REFERENCES consulta_fisica (id_consulta_fisica)
+        REFERENCES CONSULTA_FISICA (id_consulta_fisica)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- 23 RECOMENDACAO_FISICA
-    CREATE TABLE recomendacao_fisica (
+    CREATE TABLE RECOMENDACAO_FISICA (
     id_recom_fisica     INTEGER  GENERATED ALWAYS AS IDENTITY,
     id_consulta_fisica  INTEGER  NOT NULL,
     recomendacao        TEXT     NOT NULL,
@@ -89,11 +89,11 @@ CREATE TABLE objetivo_fisico_paciente (
 
     CONSTRAINT fk_recomendacao_fisica_consulta
         FOREIGN KEY (id_consulta_fisica)
-        REFERENCES consulta_fisica (id_consulta_fisica)
+        REFERENCES CONSULTA_FISICA (id_consulta_fisica)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- 24 OBSERVACAO_GERAL_CONSULTA_FISICA
-CREATE TABLE observacao_geral_consulta_fisica (
+CREATE TABLE OBSERVACAO_GERAL_CONSULTA_FISICA (
     id_obs_geral_cf     INTEGER  GENERATED ALWAYS AS IDENTITY,
     id_consulta_fisica  INTEGER  NOT NULL,
     obs_geral           TEXT     NOT NULL,
@@ -103,11 +103,11 @@ CREATE TABLE observacao_geral_consulta_fisica (
 
     CONSTRAINT fk_obs_geral_cf_consulta
         FOREIGN KEY (id_consulta_fisica)
-        REFERENCES consulta_fisica (id_consulta_fisica)
+        REFERENCES CONSULTA_FISICA (id_consulta_fisica)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- 25 INTOLERANCIA_CONSULTA_NUTRI
-CREATE TABLE intolerancia_consulta_nutri (
+CREATE TABLE INTOLERANCIA_CONSULTA_NUTRI (
     id_intolerancia_consulta_nutri  INTEGER      GENERATED ALWAYS AS IDENTITY,
     id_consulta_nutricional         INTEGER      NOT NULL,
     intolerancia                    VARCHAR(255) NOT NULL,
@@ -117,11 +117,11 @@ CREATE TABLE intolerancia_consulta_nutri (
 
     CONSTRAINT fk_intolerancia_consulta_nutri_consulta
         FOREIGN KEY (id_consulta_nutricional)
-        REFERENCES consulta_nutricional (id_consulta_nutricional)
+        REFERENCES CONSULTA_NUTRICIONAL (id_consulta_nutricional)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- 26 HABITO_ALIMENTAR
-CREATE TABLE habito_alimentar (
+CREATE TABLE HABITO_ALIMENTAR (
     id_habito_alimentar      INTEGER  GENERATED ALWAYS AS IDENTITY,
     id_consulta_nutricional  INTEGER  NOT NULL,
     habito_alimentar         TEXT     NOT NULL,
@@ -131,11 +131,11 @@ CREATE TABLE habito_alimentar (
 
     CONSTRAINT fk_habito_alimentar_consulta
         FOREIGN KEY (id_consulta_nutricional)
-        REFERENCES consulta_nutricional (id_consulta_nutricional)
+        REFERENCES CONSULTA_NUTRICIONAL (id_consulta_nutricional)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- 27 OBSERVACAO_CLINICA
-CREATE TABLE observacao_clinica (
+CREATE TABLE OBSERVACAO_CLINICA (
     id_obs_clinica            INTEGER  GENERATED ALWAYS AS IDENTITY,
     id_consulta_nutricional   INTEGER  NOT NULL,
     observacoes_clinicas      TEXT     NOT NULL,
@@ -145,11 +145,11 @@ CREATE TABLE observacao_clinica (
 
     CONSTRAINT fk_observacao_clinica_consulta
         FOREIGN KEY (id_consulta_nutricional)
-        REFERENCES consulta_nutricional (id_consulta_nutricional)
+        REFERENCES CONSULTA_NUTRICIONAL (id_consulta_nutricional)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- 28 RECOMENDACAO_NUTRICIONAL
-CREATE TABLE recomendacao_nutricional (
+CREATE TABLE RECOMENDACAO_NUTRICIONAL (
     id_recom_nutri            INTEGER  GENERATED ALWAYS AS IDENTITY,
     id_consulta_nutricional   INTEGER  NOT NULL,
     recomendacao              TEXT     NOT NULL,
@@ -159,6 +159,6 @@ CREATE TABLE recomendacao_nutricional (
 
     CONSTRAINT fk_recomendacao_nutricional_consulta
         FOREIGN KEY (id_consulta_nutricional)
-        REFERENCES consulta_nutricional (id_consulta_nutricional)
+        REFERENCES CONSULTA_NUTRICIONAL (id_consulta_nutricional)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
