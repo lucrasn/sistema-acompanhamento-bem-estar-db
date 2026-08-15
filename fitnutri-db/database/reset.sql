@@ -90,7 +90,7 @@ CASCADE;
 -- O DROP TABLE REMOVE OS TRIGGERS, MAS NÃO AS FUNÇÕES QUE ELES EXECUTAM
 DROP FUNCTION IF EXISTS fn_bloquear_imc_manual();
 DROP FUNCTION IF EXISTS fn_recalcular_imc_por_altura();
-DROP FUNCTION IF EXISTS fn_recalcular_imc_apos_vinculo();
+DROP FUNCTION IF EXISTS fn_calcular_imc_apos_vinculo();
 DROP FUNCTION IF EXISTS fn_calcular_imc();
 DROP FUNCTION IF EXISTS fn_obter_altura_evolucao(INTEGER);
 

@@ -63,40 +63,54 @@ ON EVOLUCAO
 FOR EACH ROW
 EXECUTE FUNCTION fn_calcular_imc();
 
--- FORÇA O CÁLCULO DO IMC QUANDO A EVOLUÇÃO É VINCULADA A UMA CONSULTA
-CREATE OR REPLACE FUNCTION fn_recalcular_imc_apos_vinculo()
+-- CALCULA O IMC QUANDO A EVOLUÇÃO É VINCULADA A UMA CONSULTA
+-- ATÉ ESSE MOMENTO A ALTURA DO PACIENTE AINDA NÃO É ALCANÇÁVEL:
+-- ELA SÓ APARECE DEPOIS QUE A SUBCLASSE APONTA PARA A CONSULTA
+CREATE OR REPLACE FUNCTION fn_calcular_imc_apos_vinculo()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    v_altura DECIMAL(4,2);
 BEGIN
-    UPDATE EVOLUCAO -- so pra ativar o trg_calcular_imc
-       SET peso = peso
-     WHERE id_evolucao = NEW.id_evolucao;
+    v_altura := fn_obter_altura_evolucao(
+        NEW.id_evolucao
+    );
+
+    UPDATE EVOLUCAO e
+       SET imc = CASE
+                     WHEN v_altura IS NULL OR v_altura <= 0 THEN NULL
+                     ELSE ROUND(e.peso / (v_altura * v_altura), 2)
+                 END
+     WHERE e.id_evolucao = NEW.id_evolucao;
 
     RETURN NULL;
 END;
 $$;
 
-CREATE TRIGGER trg_recalcular_imc_evolucao_fisica
+CREATE TRIGGER trg_calcular_imc_evolucao_fisica
 AFTER INSERT OR UPDATE OF id_consulta_fisica
 ON EVOLUCAO_FISICA
 FOR EACH ROW
-EXECUTE FUNCTION fn_recalcular_imc_apos_vinculo();
+EXECUTE FUNCTION fn_calcular_imc_apos_vinculo();
 
-CREATE TRIGGER trg_recalcular_imc_evolucao_nutricional
+CREATE TRIGGER trg_calcular_imc_evolucao_nutricional
 AFTER INSERT OR UPDATE OF id_consulta_nutricional
 ON EVOLUCAO_NUTRICIONAL
 FOR EACH ROW
-EXECUTE FUNCTION fn_recalcular_imc_apos_vinculo();
+EXECUTE FUNCTION fn_calcular_imc_apos_vinculo();
 
--- CALCULA O IMC QUANDO O ALTURA É ALTERADO
+-- RECALCULA O IMC DE TODAS AS EVOLUÇÕES DO PACIENTE QUANDO A ALTURA É CORRIGIDA
 CREATE OR REPLACE FUNCTION fn_recalcular_imc_por_altura()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    UPDATE EVOLUCAO e -- so pra ativar o trg_calcular_imc
-       SET peso = e.peso
+    UPDATE EVOLUCAO e
+       SET imc = CASE
+                     WHEN NEW.altura IS NULL OR NEW.altura <= 0 THEN NULL
+                     ELSE ROUND(e.peso / (NEW.altura * NEW.altura), 2)
+                 END
      WHERE e.id_evolucao IN (
                SELECT ef.id_evolucao
                  FROM EVOLUCAO_FISICA ef
@@ -123,11 +137,17 @@ WHEN (NEW.altura IS DISTINCT FROM OLD.altura)
 EXECUTE FUNCTION fn_recalcular_imc_por_altura();
 
 -- BLOQUEIA INSERÇÃO E ALTERAÇÃO MANUAL DO IMC
+-- pg_trigger_depth() > 1 SIGNIFICA QUE A ESCRITA VEIO DE OUTRO GATILHO,
+-- E NÃO DO USUÁRIO: NESSE CASO O CÁLCULO AUTOMÁTICO PODE GRAVAR
 CREATE OR REPLACE FUNCTION fn_bloquear_imc_manual()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 BEGIN
+    IF pg_trigger_depth() > 1 THEN
+        RETURN NEW;
+    END IF;
+
     IF TG_OP = 'INSERT' THEN
         IF NEW.imc IS NOT NULL THEN
             RAISE EXCEPTION
