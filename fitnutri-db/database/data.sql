@@ -45,7 +45,7 @@ VALUES
 ON CONFLICT DO NOTHING;
 
 -- Telefones e informacoes de saude declaradas pelos pacientes.
--- Os identificadores destas tabelas sao sequenciais por paciente nesta carga.
+-- Os identificadores sao gerados pelo banco (GENERATED ALWAYS AS IDENTITY).
 INSERT INTO TELEFONE_PACIENTE (id_paciente, numero_telefone)
 SELECT p.id_paciente, v.numero_telefone
 FROM PACIENTE AS p
@@ -58,58 +58,58 @@ JOIN (VALUES
 ) AS v(cpf, numero_telefone) ON v.cpf = p.cpf
 ON CONFLICT DO NOTHING;
 
-INSERT INTO CONTATO_EMERGENCIA (id_contato_emr, id_paciente, nome, numero)
-SELECT v.id_contato_emr, p.id_paciente, v.nome, v.numero
+INSERT INTO CONTATO_EMERGENCIA (id_paciente, nome, numero)
+SELECT p.id_paciente, v.nome, v.numero
 FROM PACIENTE AS p
 JOIN (VALUES
-    ('12345678901', 1, 'Marcos Costa', '+55 31 99111-2233'),
-    ('23456789012', 1, 'Fernanda Lima', '+55 11 98888-7766'),
-    ('34567890123', 1, 'Juliana Rocha', '+55 21 97777-6655'),
-    ('45678901235', 1, 'Renata Nunes', '+55 41 96666-5544'),
-    ('56789012346', 1, 'Paulo Moura', '+55 81 95555-4433')
-) AS v(cpf, id_contato_emr, nome, numero) ON v.cpf = p.cpf
+    ('12345678901', 'Marcos Costa', '+55 31 99111-2233'),
+    ('23456789012', 'Fernanda Lima', '+55 11 98888-7766'),
+    ('34567890123', 'Juliana Rocha', '+55 21 97777-6655'),
+    ('45678901235', 'Renata Nunes', '+55 41 96666-5544'),
+    ('56789012346', 'Paulo Moura', '+55 81 95555-4433')
+) AS v(cpf, nome, numero) ON v.cpf = p.cpf
 ON CONFLICT DO NOTHING;
 
-INSERT INTO RESTRICAO_FISICA (id_restri_fisica, id_paciente, limitacoes_fisicas)
-SELECT v.id_restri_fisica, p.id_paciente, v.limitacoes_fisicas
+INSERT INTO RESTRICAO_FISICA (id_paciente, limitacoes_fisicas)
+SELECT p.id_paciente, v.limitacoes_fisicas
 FROM PACIENTE AS p
 JOIN (VALUES
-    ('12345678901', 1, 'Evitar impacto excessivo no joelho direito'),
-    ('34567890123', 1, 'Nenhuma restricao fisica declarada')
-) AS v(cpf, id_restri_fisica, limitacoes_fisicas) ON v.cpf = p.cpf
+    ('12345678901', 'Evitar impacto excessivo no joelho direito'),
+    ('34567890123', 'Nenhuma restricao fisica declarada')
+) AS v(cpf, limitacoes_fisicas) ON v.cpf = p.cpf
 ON CONFLICT DO NOTHING;
 
-INSERT INTO RESTRICAO_ALIMENTAR (id_restri_alim, id_paciente, limitacoes_alimentares)
-SELECT v.id_restri_alim, p.id_paciente, v.limitacoes_alimentares
+INSERT INTO RESTRICAO_ALIMENTAR (id_paciente, limitacoes_alimentares)
+SELECT p.id_paciente, v.limitacoes_alimentares
 FROM PACIENTE AS p
 JOIN (VALUES
-    ('12345678901', 1, 'Reduzir consumo de alimentos ultraprocessados'),
-    ('34567890123', 1, 'Evitar frutos do mar')
-) AS v(cpf, id_restri_alim, limitacoes_alimentares) ON v.cpf = p.cpf
+    ('12345678901', 'Reduzir consumo de alimentos ultraprocessados'),
+    ('34567890123', 'Evitar frutos do mar')
+) AS v(cpf, limitacoes_alimentares) ON v.cpf = p.cpf
 ON CONFLICT DO NOTHING;
 
-INSERT INTO PACIENTE_DOENCA (id_paciente_doenca, id_paciente, doencas)
-SELECT v.id_paciente_doenca, p.id_paciente, v.doencas
+INSERT INTO PACIENTE_DOENCA (id_paciente, doencas)
+SELECT p.id_paciente, v.doencas
 FROM PACIENTE AS p
 JOIN (VALUES
-    ('23456789012', 1, 'Hipertensao arterial controlada')
-) AS v(cpf, id_paciente_doenca, doencas) ON v.cpf = p.cpf
+    ('23456789012', 'Hipertensao arterial controlada')
+) AS v(cpf, doencas) ON v.cpf = p.cpf
 ON CONFLICT DO NOTHING;
 
-INSERT INTO PACIENTE_ALERGIA (id_paciente_alerg, id_paciente, alergias)
-SELECT v.id_paciente_alerg, p.id_paciente, v.alergias
+INSERT INTO PACIENTE_ALERGIA (id_paciente, alergias)
+SELECT p.id_paciente, v.alergias
 FROM PACIENTE AS p
 JOIN (VALUES
-    ('34567890123', 1, 'Crustaceos')
-) AS v(cpf, id_paciente_alerg, alergias) ON v.cpf = p.cpf
+    ('34567890123', 'Crustaceos')
+) AS v(cpf, alergias) ON v.cpf = p.cpf
 ON CONFLICT DO NOTHING;
 
-INSERT INTO MEDICAMENTO (id_medicamento, id_paciente, medicamentos)
-SELECT v.id_medicamento, p.id_paciente, v.medicamentos
+INSERT INTO MEDICAMENTO (id_paciente, medicamentos)
+SELECT p.id_paciente, v.medicamentos
 FROM PACIENTE AS p
 JOIN (VALUES
-    ('23456789012', 1, 'Losartana 50 mg')
-) AS v(cpf, id_medicamento, medicamentos) ON v.cpf = p.cpf
+    ('23456789012', 'Losartana 50 mg')
+) AS v(cpf, medicamentos) ON v.cpf = p.cpf
 ON CONFLICT DO NOTHING;
 
 -- Profissionais: as especializacoes ainda serao inseridas quando as tabelas
