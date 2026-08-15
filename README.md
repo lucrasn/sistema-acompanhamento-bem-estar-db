@@ -24,7 +24,8 @@ fitnutri-db/
 │   ├── reset.sql               remove todas as tabelas e funções
 │   └── triggers/
 │       ├── imc.sql             cálculo automático do IMC
-│       └── valor_liquido.sql   cálculo automático do valor líquido
+│       ├── valor_liquido.sql   cálculo automático do valor líquido
+│       └── heranca.sql         disjunção e totalidade das especializações
 └── docs/
     ├── DER.drawio.xml          diagrama entidade-relacionamento
     ├── modelo-logico.docx      esquema lógico relacional
@@ -41,6 +42,7 @@ createdb fitnutri
 psql -d fitnutri -f fitnutri-db/database/schema.sql
 psql -d fitnutri -f fitnutri-db/database/triggers/imc.sql
 psql -d fitnutri -f fitnutri-db/database/triggers/valor_liquido.sql
+psql -d fitnutri -f fitnutri-db/database/triggers/heranca.sql
 psql -d fitnutri -f fitnutri-db/database/data.sql
 ```
 
@@ -62,11 +64,11 @@ Os gatilhos precisam vir depois do `schema.sql`, porque referenciam as tabelas. 
 | `FINANCEIRO` | Serviços do plano, contratação, pagamentos e observações |
 | `HISTORICO` | Alterações realizadas nos planos de treino e alimentares |
 
-Números do esquema: 52 chaves estrangeiras, 69 restrições de unicidade, 54 verificações de domínio, 8 funções e 7 gatilhos.
+Números do esquema: 52 chaves estrangeiras, 71 restrições de unicidade, 54 verificações de domínio, 11 funções e 15 gatilhos.
 
 ## Decisões de modelagem
 
-**Especialização.** Há duas hierarquias, ambas mapeadas mantendo a relação da superclasse e criando uma relação por subclasse com a chave da superclasse como chave primária. `PROFISSIONAL` é uma especialização **sobreposta e total** — o mesmo profissional pode ser nutricionista e educador físico. `EVOLUCAO` é **disjunta e total**. A disjunção e a totalidade não são expressáveis em SQL padrão e precisam ser garantidas pela aplicação.
+**Especialização.** Há duas hierarquias, ambas mapeadas mantendo a relação da superclasse e criando uma relação por subclasse com a chave da superclasse como chave primária. `PROFISSIONAL` é uma especialização **sobreposta e total** — o mesmo profissional pode ser nutricionista e educador físico. `EVOLUCAO` é **disjunta e total**. Como nenhuma das duas restrições é expressável por `CHECK` ou `UNIQUE`, elas são garantidas por gatilho em `triggers/heranca.sql`: a disjunção é verificada na inserção da subclasse, e a totalidade no fim da transação, já que a subclasse só pode ser inserida depois da superclasse. Ser sobreposta não exige verificação nenhuma — constar nas duas subclasses é justamente o que a restrição permite.
 
 **Atributos derivados.** O DER marca três atributos como derivados, e cada um é tratado de um jeito:
 
