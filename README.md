@@ -25,14 +25,12 @@ fitnutri-db/
 │   └── triggers/
 │       ├── imc.sql             cálculo automático do IMC
 │       └── valor_liquido.sql   cálculo automático do valor líquido
-├── docs/
-│   ├── DER.drawio.xml          diagrama entidade-relacionamento
-│   ├── modelo-logico.docx      esquema lógico relacional
-│   ├── dicionario-dados.docx   dicionário de dados
-│   ├── correcoes/              devolutivas recebidas
-│   └── tema-9.pdf              enunciado do projeto
-├── .env.example
-└── README.md
+└── docs/
+    ├── DER.drawio.xml          diagrama entidade-relacionamento
+    ├── modelo-logico.docx      esquema lógico relacional
+    ├── dicionario-dados.docx   dicionário de dados
+    ├── correcoes/              devolutivas recebidas
+    └── tema-9.pdf              enunciado do projeto
 ```
 
 ## Como executar
@@ -40,15 +38,13 @@ fitnutri-db/
 ```bash
 createdb fitnutri
 
-psql -d fitnutri -f database/schema.sql
-psql -d fitnutri -f database/triggers/imc.sql
-psql -d fitnutri -f database/triggers/valor_liquido.sql
-psql -d fitnutri -f database/data.sql
+psql -d fitnutri -f fitnutri-db/database/schema.sql
+psql -d fitnutri -f fitnutri-db/database/triggers/imc.sql
+psql -d fitnutri -f fitnutri-db/database/triggers/valor_liquido.sql
+psql -d fitnutri -f fitnutri-db/database/data.sql
 ```
 
-Para recriar do zero, rode `database/reset.sql` antes da sequência acima.
-
-Copie o `.env.example` para `.env` e ajuste as credenciais de conexão. O `.env` está no `.gitignore` e não deve ser versionado.
+Os gatilhos precisam vir depois do `schema.sql`, porque referenciam as tabelas. Para recriar do zero, rode `reset.sql` antes de toda a sequência.
 
 ## O modelo
 
@@ -68,7 +64,7 @@ Copie o `.env.example` para `.env` e ajuste as credenciais de conexão. O `.env`
 
 Números do esquema: 52 chaves estrangeiras, 69 restrições de unicidade, 54 verificações de domínio, 8 funções e 7 gatilhos.
 
-### Decisões de modelagem
+## Decisões de modelagem
 
 **Especialização.** Há duas hierarquias, ambas mapeadas mantendo a relação da superclasse e criando uma relação por subclasse com a chave da superclasse como chave primária. `PROFISSIONAL` é uma especialização **sobreposta e total** — o mesmo profissional pode ser nutricionista e educador físico. `EVOLUCAO` é **disjunta e total**. A disjunção e a totalidade não são expressáveis em SQL padrão e precisam ser garantidas pela aplicação.
 
@@ -80,3 +76,10 @@ Números do esquema: 52 chaves estrangeiras, 69 restrições de unicidade, 54 ve
 **Exclusão lógica.** Registros não são removidos fisicamente. As chaves estrangeiras que apontam para cadastros, consultas, prescrições e contratos usam `ON DELETE RESTRICT`, e a desativação é feita pelo campo `status`. As tabelas de atributo multivalorado usam `ON DELETE CASCADE`, por serem parte do próprio registro.
 
 **Histórico de alterações.** `HISTORICO_PLANO_TREINO` e `HISTORICO_PLANO_ALIMENTAR` registram cada mudança nos planos, com data, descrição e o profissional responsável — que pode ser diferente de quem prescreveu o plano originalmente.
+
+## Convenções do SQL
+
+- Chaves primárias substitutas usam `GENERATED ALWAYS AS IDENTITY`, então o valor nunca é informado no `INSERT`.
+- Dentro do `CREATE TABLE` ficam as colunas, a chave primária, as restrições de unicidade e as verificações, nessa ordem e separadas por linha em branco.
+- Chaves estrangeiras ficam em `ALTER TABLE`, agrupadas no fim do `schema.sql`.
+- Identificadores são escritos sem aspas e sem acentos; o PostgreSQL os normaliza para minúsculas.
