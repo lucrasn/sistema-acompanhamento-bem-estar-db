@@ -85,7 +85,9 @@ CREATE TABLE EXERCICIO (
     grupo_muscular VARCHAR(80),
     modalidade VARCHAR(80),
 
-    CONSTRAINT pk_exercicio PRIMARY KEY (id_exercicio)
+    CONSTRAINT pk_exercicio PRIMARY KEY (id_exercicio),
+
+    CONSTRAINT uq_exercicio_nome UNIQUE (nome)
 );
 
 CREATE TABLE ALIMENTO (
@@ -104,6 +106,8 @@ CREATE TABLE ALIMENTO (
         ) STORED,
 
     CONSTRAINT pk_alimento PRIMARY KEY (id_alimento),
+
+    CONSTRAINT uq_alimento_nome UNIQUE (nome),
 
     CONSTRAINT ck_alimento_porcao CHECK (porcao_referencia > 0),
     CONSTRAINT ck_alimento_proteinas CHECK (proteinas_porcao >= 0),
