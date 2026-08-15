@@ -14,7 +14,7 @@ CREATE TABLE PLANO_TREINO (
 
     CONSTRAINT fk_plano_treino_consulta
         FOREIGN KEY (id_consulta_fisica)
-        REFERENCES CONSULTA_FISICO (id_consulta_fisica)
+        REFERENCES CONSULTA_FISICA (id_consulta_fisica)
         ON DELETE RESTRICT ON UPDATE CASCADE,
 
     CONSTRAINT ck_plano_treino_status
@@ -83,10 +83,10 @@ CREATE TABLE PLANO_TREINO_PODE_CONTER_EXERCICIO (
         ON DELETE CASCADE ON UPDATE CASCADE,
 
     CONSTRAINT ck_ptpce_intervalo
-        CHECK (intervalo >= 0),
+        CHECK (intervalo > INTERVAL '0'),
 
     CONSTRAINT ck_ptpce_tempo_execucao
-        CHECK (tempo_execucao > INTERVAL '0'),
+        CHECK (tempo_execucao >= 0),
 
     CONSTRAINT ck_ptpce_carga
         CHECK (carga >= 0),
@@ -109,6 +109,6 @@ CREATE TABLE OBSERVACAO_TECNICA (
 
     CONSTRAINT fk_observacao_tecnica_ptpce
         FOREIGN KEY (id_plano_treino, id_exercicio)
-        REFERENCES PLANO_TREINO_PODE_CONTER_EXERCICIO (id_plano_treino, id_exercicio)
+        REFERENCES PLANO_TREINO_PODE_CONTER_EXERCICIO (id_exercicio, id_plano_treino)
         ON DELETE CASCADE ON UPDATE CASCADE
 );

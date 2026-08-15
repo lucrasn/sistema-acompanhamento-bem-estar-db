@@ -21,7 +21,7 @@
 );
 
 -- 49 HISTORICO_PLANO_ALIMENTAR
-CREATE TABLE historico_plano_alimentar (
+CREATE TABLE HISTORICO_PLANO_ALIMENTAR (
     id_historico_pa      INTEGER    GENERATED ALWAYS AS IDENTITY,
     id_plano_alimentar   INTEGER    NOT NULL,
     data_alteracao       TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -33,11 +33,11 @@ CREATE TABLE historico_plano_alimentar (
 
     CONSTRAINT fk_historico_plano_alimentar_plano
         FOREIGN KEY (id_plano_alimentar)
-        REFERENCES plano_alimentar (id_plano_alimentar)
+        REFERENCES PLANO_ALIMENTAR (id_plano_alimentar)
         ON DELETE CASCADE ON UPDATE CASCADE,
 
     CONSTRAINT fk_historico_plano_alimentar_profissional
         FOREIGN KEY (id_profissional)
-        REFERENCES profissional (id_profissional)
+        REFERENCES PROFISSIONAL (id_profissional)
         ON DELETE RESTRICT ON UPDATE CASCADE
 );

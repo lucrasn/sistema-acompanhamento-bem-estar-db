@@ -37,7 +37,7 @@ CREATE TABLE CONSULTA_NUTRICIONAL (
     id_consulta_nutricional  INTEGER      GENERATED ALWAYS AS IDENTITY,
     id_paciente              INTEGER      NOT NULL,
     id_profissional          INTEGER      NOT NULL,
-    data_consulta            INTEGER      NOT NULL,
+    data_consulta            DATE         NOT NULL,
     horario                  TIME         NOT NULL,
     objetivo_nutricional     VARCHAR(255),
     suplementacao            TEXT,
