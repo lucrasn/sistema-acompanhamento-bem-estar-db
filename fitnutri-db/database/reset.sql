@@ -94,6 +94,10 @@ DROP FUNCTION IF EXISTS fn_recalcular_imc_apos_vinculo();
 DROP FUNCTION IF EXISTS fn_calcular_imc();
 DROP FUNCTION IF EXISTS fn_obter_altura_evolucao(INTEGER);
 
+DROP FUNCTION IF EXISTS fn_verificar_disjuncao_evolucao();
+DROP FUNCTION IF EXISTS fn_verificar_totalidade_evolucao();
+DROP FUNCTION IF EXISTS fn_verificar_totalidade_profissional();
+
 DROP FUNCTION IF EXISTS fn_bloquear_valor_liquido_manual();
 DROP FUNCTION IF EXISTS fn_calcular_valor_liquido();
 DROP FUNCTION IF EXISTS fn_obter_valor_mensal_contrato(INTEGER);
