@@ -22,6 +22,7 @@ fitnutri-db/
 │   ├── schema.sql              49 tabelas e 52 chaves estrangeiras
 │   ├── data.sql                carga inicial de dados
 │   ├── reset.sql               remove todas as tabelas e funções
+│   ├── tests.sql               30 testes das regras críticas
 │   └── triggers/
 │       ├── imc.sql             cálculo automático do IMC
 │       ├── valor_liquido.sql   cálculo automático do valor líquido
@@ -47,6 +48,14 @@ psql -d fitnutri -f fitnutri-db/database/data.sql
 ```
 
 Os gatilhos precisam vir depois do `schema.sql`, porque referenciam as tabelas. Para recriar do zero, rode `reset.sql` antes de toda a sequência.
+
+Para conferir se as regras estão valendo:
+
+```bash
+psql -d fitnutri -f fitnutri-db/database/tests.sql
+```
+
+O `tests.sql` roda 30 casos dentro de uma transação que termina em `ROLLBACK` — não altera nenhum dado — e imprime um relatório com a contagem de falhas.
 
 ## O modelo
 
